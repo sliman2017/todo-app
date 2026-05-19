@@ -1,4 +1,4 @@
-package com.example.todoapp.ui
+package com.example.todoapp
 
 import java.util.Date
 

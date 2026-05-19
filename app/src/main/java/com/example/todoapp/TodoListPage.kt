@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,15 +27,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.todoapp.ui.Todo
-import com.example.todoapp.ui.getFakeTodos
 import java.text.SimpleDateFormat
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun TodoListPage(){
-    val todos = getFakeTodos()
+fun TodoListPage(viewModel: TodoViewModel){
+    val todos by viewModel.todoList.observeAsState()
     var inputText by remember {
         mutableStateOf("")
         }
@@ -59,7 +59,10 @@ fun TodoListPage(){
                 label = { Text(text = "Enter todo")},
                 modifier = Modifier.weight(0.7f))
             Button(
-                onClick = {},
+                onClick = {
+                    viewModel.addTodo(inputText)
+                    inputText = ""
+                },
                 ){
                 Text(
                     text = "Add",
@@ -68,14 +71,26 @@ fun TodoListPage(){
                 )
             }
         }
-        LazyColumn(
-            content = {
-                itemsIndexed(todos){ index: Int, item: Todo ->
-                    TodoItem(item= item)
+        todos?.let{
+            LazyColumn(
+                content = {
+                    itemsIndexed(it){ index: Int, item: Todo ->
+                        TodoItem(item= item)
 
+                    }
                 }
-            }
-        )
+            )
+        }?:
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = "No items yet!",
+                color = Color.LightGray,
+                fontSize = 15.sp,
+            )
+
+
+
     }
 }
 
