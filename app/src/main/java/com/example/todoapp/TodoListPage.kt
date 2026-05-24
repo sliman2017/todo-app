@@ -1,5 +1,6 @@
 package com.example.todoapp
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,9 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun TodoListPage(viewModel: TodoViewModel){
     val todos by viewModel.todoList.observeAsState()
+    var i by remember {
+        mutableStateOf(0)
+    }
     var inputText by remember {
         mutableStateOf("")
         }
@@ -75,7 +79,9 @@ fun TodoListPage(viewModel: TodoViewModel){
             LazyColumn(
                 content = {
                     itemsIndexed(it){ index: Int, item: Todo ->
-                        TodoItem(item= item)
+                        TodoItem(item= item, onDelete = {
+                            viewModel.deleteTodo(item.id )
+                        })
 
                     }
                 }
@@ -95,7 +101,7 @@ fun TodoListPage(viewModel: TodoViewModel){
 }
 
 @Composable
-fun TodoItem(item: Todo) {
+fun TodoItem(item: Todo, onDelete: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth()
             .padding(8.dp)
@@ -119,7 +125,7 @@ fun TodoItem(item: Todo) {
         )
     }
         IconButton(
-            onClick = {}) {
+            onClick = onDelete) {
             Icon(
                 painter = painterResource(id = R.drawable.outline_delete_24),
                 contentDescription = "delete",

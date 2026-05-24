@@ -8,8 +8,9 @@ class TodoViewModel : ViewModel() {
     private var _todoList = MutableLiveData<List<Todo>>()
     val todoList: LiveData<List<Todo>> = _todoList
 
-    fun getAllTodo() {
-        _todoList.value = TodoManager.getAllTodo()
+    fun getAllTodo(): List<Todo> {
+         _todoList.value = TodoManager.getAllTodo().toList()
+        return _todoList.value ?: emptyList()
     }
 
     fun addTodo(title: String){
